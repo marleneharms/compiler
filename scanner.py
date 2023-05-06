@@ -239,7 +239,8 @@ def scanner():
             next_char = ''
     return 'EOF'
     
-                
+
+# call the scanner function               
 scanner = scanner()
 if scanner == 'EOF':
     printTables()

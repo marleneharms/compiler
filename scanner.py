@@ -140,7 +140,7 @@ def printTables():
 # scanner function
 def scanner():
     # open the file and read it
-    code = open_file('input2.txt')
+    code = open_file('input1.txt')
     # initialize the state to 0
     state = 0
     # initialize the lexeme to the empty string
@@ -222,7 +222,7 @@ def scanner():
                     print("Error EOF")
                     return "Error EOF" 
                 elif state == 39:
-                    print("Error Identifier")
+                    print("Error Identifier or Invalid Symbol")
                     return "Error Symbol"
                 elif state == 40:
                     print("Error Invalid Float Number")
@@ -237,6 +237,9 @@ def scanner():
             next_char = code[index]
         else:
             next_char = ''
+            if state not in error_states and state not in final_states:
+                print("Error EOF")
+                return "Error EOF"
     return 'EOF'
     
 

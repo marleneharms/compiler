@@ -3,7 +3,10 @@ integers, and then multiply each element of
 the array by a float, stores the result into an
 array of floats. Subsequently, the array of
 floats is sorted and display it into standard
-output.*/
+output.@#*/ 
+
+58.22
+"Marlene"
 
 int x[10];
 string s;

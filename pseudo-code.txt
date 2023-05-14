@@ -1,0 +1,50 @@
+
+initTables()
+function scanner(){
+    code = openFile()
+    state = 0
+    lexene = ''
+    nextChar = code[0]
+    index = 0
+
+    while nextChar not EOF {
+
+        if nextChat is not whitespace {
+            lexeme = “”
+            state = 0 
+            while state is not finalState and is not errorState {
+                state = checkNextStateInTransitionTable()
+                lexeme += code[index]
+                index ++
+            }
+
+            if state is finalState {
+                if lexeme is token{
+                    push token to scannnerRecognition
+                }
+                if state is num {
+                    push lexeme to numTable
+                    push token to scannnerRecognition
+                }
+                if state is identifier {
+                    push lexeme to idTable
+                    push token to scannnerRecognition
+                }
+                if state is string {
+                    push lexeme to stringTable
+                    push token to scannnerRecognition
+                }
+                if state is floatnum {
+                    push lexeme to floatTable
+                    push token to scannnertRecognition
+                }
+            }
+
+            if state is errorState {
+                return errorState
+            }
+        }
+    }
+    convertcannnerRecognitionToTokens()
+    printTables()
+}

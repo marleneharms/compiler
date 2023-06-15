@@ -468,7 +468,7 @@ def mulop():
         match('/')
 
 def args():
-    if current_token == '(' or current_token in identifiers or current_token in numbers or current_token in floatnumbers
+    if current_token == '(' or current_token in identifiers or current_token in numbers or current_token in floatnumbers:
         factor()
         term_prime()
         arith_expr_prime()

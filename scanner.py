@@ -423,6 +423,68 @@ def var_prime():
     elif current_token == '=' or current_token == '<=' or current_token == '<' or current_token == '>' or current_token == '>=' or current_token == '==' or current_token == '!=' or current_token == '(' or current_token in identifiers or current_token in numbers or current_token in floatnumbers  or current_token == '*' or current_token == '/' or current_token == '+' or current_token == '-' or current_token == ')' or current_token == ';' or current_token == ',' or current_token == ']':
         return
 
+def expression_prime():
+    if current_token == '<=' or current_token == '<' or current_token == '>' or current_token == '>=' or current_token == '==' or current_token == '!=':
+        relop()
+        factor()
+        term_prime()
+        arith_expr_prime()
+    elif current_token == ')' or current_token == ';':
+        return
+
+def relop():
+    if current_token == '<=':
+        match('<=')
+    elif current_token == '<':
+        match('<')
+    elif current_token == '>':
+        match('>')
+    elif current_token == '>=':
+        match('>=')
+    elif current_token == '==':
+        match('==')
+    elif current_token == '!=':
+        match('!=')
+
+def arith_expr_prime():
+    if current_token == '+' or current_token == '-':
+        addop()
+        factor()
+        term_prime()
+        arith_expr_prime()
+    elif current_token == '<=' or current_token == '<' or current_token == '>' or current_token == '>=' or current_token == '==' or current_token == '!=' or current_token == ')' or current_token == ';' or current_token == ',' or current_token == ']' or current_token == '}' or current_token in identifiers or current_token == '(' or current_token in numbers or current_token in floatnumbers or current_token in identifiers: 
+        return
+
+def addop():
+    if current_token == '+':
+        match('+')
+    elif current_token == '-':
+        match('-')
+
+def mulop():
+    if current_token == '*':
+         match('*')
+    elif current_token == '/':
+        match('/')
+
+def args():
+    if current_token == '(' or current_token in identifiers or current_token in numbers or current_token in floatnumbers
+        factor()
+        term_prime()
+        arith_expr_prime()
+        args_list_prime()
+    elif current_token == ')':
+        return
+def args_list_prime():
+    if current_token == ',':
+        match(',')
+        factor()
+        term_prime()
+        arith_expr_prime()
+        args_list_prime()
+    elif current_token == ')':
+        return
+    
 def local_declarations():
     var_specifier()
     match(current_token)

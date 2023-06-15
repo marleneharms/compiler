@@ -249,7 +249,6 @@ current_token = ''
 
 def syntax():
     scanner_output.append('$')
-    current
     current_token = scanner_output[cont_current_token]
     program()
     if(current_token == '$'):
@@ -274,17 +273,35 @@ def program():
     match('}')
 
 def declaration():
-    var_specifier()
-    match(current_token)
-    var_declaration_prime()
-
+    if current_token == 'int' or current_token == 'float' or current_token == 'string':
+        var_specifier()
+        match(current_token)
+        var_declaration_prime()
+        match(';')
+    elif current_token == 'void' or current_token in identifiers:
+        fun_specifier()
+        match(current_token)
+        match('(')
+        params()
+        match(')')
+        match('{')
+        local_declarations()
+        statement_list()
+        match('}')
+    
 def declaration_list():
-    declaration()
-    declaration_list()
+    if current_token == 'int' or current_token == 'float' or current_token == 'string':
+        declaration()
+        declaration_list()
+    elif current_token == 'void':
+        return
 
 def statement_list():
-    statement()
-    statement_list()
+    if current_token in identifiers or current_token == 'if' or current_token == 'while' or current_token == 'read' or current_token == 'write':
+        statement()
+        statement_list()
+    elif current_token == '{':
+        return
 
 def statement():
     if current_token in identifiers:
@@ -331,13 +348,14 @@ def statement():
         match(';')
 
 def assigment_stmt_prime():
-    if current_token == '(' or current_token in identifiers or current_token == 'int' or current_token == 'float':
+    if current_token == '(' or current_token in identifiers or current_token in numbers or current_token in floatnumbers:
         factor()
         term_prime()
         arith_expr_prime()
         expression_prime()
-    elif current_token == 'string':
-        match('string')
+    elif current_token in strings:
+        match(current_token)
+        match(';')
 
 def selection_stmt_prime():
     if current_token == 'else':
@@ -408,7 +426,7 @@ def term_prime():
         match(current_token)
         factor()
         term_prime()
-    elif  current_token == '<=' or current_token == '<' or current_token == '>' or current_token == '>=' or current_token == '==' or current_token == '!=' or current_token == '(' or current_token == 'float' or current_token == 'int' or current_token == '+' or current_token == '-' or current_token == ')' or current_token == ';' or current_token == ',' or current_token == ']' or current_token == '}' or current_token in identifiers:
+    elif  current_token == '<=' or current_token == '<' or current_token == '>' or current_token == '>=' or current_token == '==' or current_token == '!=' or current_token == '(' or current_token in floatnumbers or current_token in numbers or current_token == '+' or current_token == '-' or current_token == ')' or current_token == ';' or current_token == ',' or current_token == ']' or current_token == '}' or current_token in identifiers:
         return
     else:
         error()
@@ -539,6 +557,9 @@ def var_declaration_prime():
         match(':')
     elif current_token == '[':
         match('[')
+        match(current_token)
+        match(']')
+        match(';')
 
 def match(terminal):
     if current_token == '$' :
@@ -548,8 +569,7 @@ def match(terminal):
         cont_current_token = cont_current_token+1
         current_token = scanner_output[cont_current_token]
     else:
-        print("Syntax_Analysis_in_Error_match")
-        exit(1)
+        error()
 
 def error():
     print("Syntax_Analysis_Error")

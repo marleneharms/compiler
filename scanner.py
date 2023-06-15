@@ -243,6 +243,255 @@ def scanner():
     return 'EOF'
     
 
+scanner_output = []
+cont_current_token = 0
+current_token = ''
+
+def syntax():
+    scanner_output.append('$')
+    current
+    current_token = scanner_output[cont_current_token]
+    program()
+    if(current_token == '$'):
+        print("Syntax_Analysis_OK")
+        exit(0)
+    else:
+        print("Syntax_Analysis_Error")
+        exit(1)
+
+def program():
+    declaration_list()
+    match('void')
+    match(current_token)
+    match('(')
+    match('void')
+    match(')')
+    match('{')
+    local_declarations()
+    statement_list()
+    match('return')
+    match(';')
+    match('}')
+
+def declaration():
+    var_specifier()
+    match(current_token)
+    var_declaration_prime()
+
+def declaration_list():
+    declaration()
+    declaration_list()
+
+def statement_list():
+    statement()
+    statement_list()
+
+def statement():
+    if current_token in identifiers:
+        match(current_token)
+        statement_prime()
+    elif current_token == '{':
+        match('{')
+        local_declarations()
+        statement_list()
+        match('}')
+    elif current_token == 'if':
+        match('if')
+        match('(')
+        factor()
+        term_prime()
+        arith_expr_prime()
+        expression_prime()
+        match(')')
+        statement()
+        selection_stmt_prime()
+    elif current_token == 'while':
+        match('while')
+        match('(')
+        factor()
+        term_prime()
+        arith_expr_prime()
+        expression_prime()
+        match(')')
+        statement()
+    elif current_token == 'return':
+        match('return')
+        return_stmt_prime()
+    elif current_token == 'read':
+        match('read')
+        match(current_token)
+        var_prime()
+        match(';')
+    elif current_token == 'write':
+        match('write')
+        factor()
+        term_prime()
+        arith_expr_prime()
+        expression_prime()
+        match(';')
+
+def assigment_stmt_prime():
+    if current_token == '(' or current_token in identifiers or current_token == 'int' or current_token == 'float':
+        factor()
+        term_prime()
+        arith_expr_prime()
+        expression_prime()
+    elif current_token == 'string':
+        match('string')
+
+def selection_stmt_prime():
+    if current_token == 'else':
+        match('else')
+        statement()
+    elif current_token in identifiers or current_token == '{' or current_token == 'if' or current_token == 'while' or current_token == 'return' or current_token == 'read' or current_token == 'write':
+        return
+
+def return_stmt_prime():
+    if current_token == ';':
+        match(';')
+    elif current_token in identifiers or current_token == '(' or current_token in numbers or current_token in floatnumbers:
+        factor()
+        term_prime()
+        arith_expr_prime()
+        expression_prime()
+        match(';')
+
+def output_stmt_prime():
+    if current_token in identifiers or current_token == '(' or current_token in numbers or current_token in floatnumbers:
+        factor()
+        term_prime()
+        arith_expr_prime()
+        expression_prime()
+        match(';')
+    elif current_token in strings:
+        match(current_token)
+        match(';')
+
+def statement_prime():
+    if current_token in identifiers:
+        match(current_token)
+        match('(')
+        args()
+        match(')')
+        match(';')
+    else:
+        var_prime()
+        match('=')
+        assigment_stmt_prime()
+
+def factor():
+    if current_token in identifiers:
+        match(current_token)
+        factor_prime()
+    elif current_token == '(':
+        match('(')
+        factor()
+        term_prime()
+        arith_expr_prime()
+        match(')')
+    elif current_token == 'int':
+        match('int')
+    elif current_token == 'float':
+        match('float')
+
+def factor_prime():
+    if current_token in identifiers:
+        match(current_token)
+        match('(')
+        args()
+        match(')')
+    else:
+        var_prime()
+
+def term_prime():
+    if current_token == '*' or current_token == '/':
+        match(current_token)
+        factor()
+        term_prime()
+    elif  current_token == '<=' or current_token == '<' or current_token == '>' or current_token == '>=' or current_token == '==' or current_token == '!=' or current_token == '(' or current_token == 'float' or current_token == 'int' or current_token == '+' or current_token == '-' or current_token == ')' or current_token == ';' or current_token == ',' or current_token == ']' or current_token == '}' or current_token in identifiers:
+        return
+    else:
+        error()
+
+def var_prime():
+    if current_token == '[':
+        match('[')
+        factor()
+        term_prime()
+        arith_expr_prime()
+        match(']')
+    elif current_token == '=' or current_token == '<=' or current_token == '<' or current_token == '>' or current_token == '>=' or current_token == '==' or current_token == '!=' or current_token == '(' or current_token in identifiers or current_token in numbers or current_token in floatnumbers  or current_token == '*' or current_token == '/' or current_token == '+' or current_token == '-' or current_token == ')' or current_token == ';' or current_token == ',' or current_token == ']':
+        return
+
+def local_declarations():
+    var_specifier()
+    match(current_token)
+    var_declaration_prime()
+    local_declarations()
+
+def var_specifier():
+    if current_token == 'int':
+        match('int')
+    elif current_token == 'float':
+        match('float')
+    elif current_token == 'string':
+        match('string')   
+
+def fun_specifier():
+    if current_token == 'void':
+        match('void')
+    elif current_token == 'int' or current_token == 'float' or current_token == 'string':
+        var_specifier()
+        match(current_token)
+
+def params():
+    if current_token == 'void':
+        match('void')
+        params_prime()
+    elif current_token == 'int' or current_token == 'float' or current_token == 'string':
+        var_specifier()
+        match(current_token)
+        params_prime()
+        params_prime()
+
+def params_prime():
+    if current_token == ',' or current_token == '.' or current_token == ')':
+        return
+    elif current_token == '[':
+        match('[')
+        match(']')
+
+def params_list_prime():
+    if current_token == ',':
+        match(',')
+        var_specifier()
+        match(current_token)
+        params_prime()
+        params_list_prime()
+    elif current_token == ')':
+        return
+
+def var_declaration_prime():
+    if current_token == ':':
+        match(':')
+    elif current_token == '[':
+        match('[')
+
+def match(terminal):
+    if current_token == '$' :
+        print("Syntax_Analysis_OK")
+        exit(0)
+    elif current_token == terminal:
+        cont_current_token = cont_current_token+1
+        current_token = scanner_output[cont_current_token]
+    else:
+        print("Syntax_Analysis_in_Error_match")
+        exit(1)
+
+def error():
+    print("Syntax_Analysis_Error")
+    exit(1)
+
 # call the scanner function               
 scanner = scanner()
 if scanner == 'EOF':

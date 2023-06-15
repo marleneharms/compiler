@@ -475,6 +475,7 @@ def args():
         args_list_prime()
     elif current_token == ')':
         return
+
 def args_list_prime():
     if current_token == ',':
         match(',')

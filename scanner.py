@@ -81,6 +81,10 @@ strings = {}
 tokens_recognition = []
 scanner_output = []
 
+
+cont_current_token = 0
+current_token = ''
+
 # open file and read it
 def open_file(file_name):
     file = open(file_name, 'r') # open the file
@@ -105,9 +109,9 @@ def nextState(state, character):
 
 # print the tables
 def printTables():
-    print("SCANNER OUTPUT: ")
-    print(scanner_output)
-    print("\n\n")
+    # print("SCANNER OUTPUT: ")
+    # print(scanner_output)
+    # print("\n\n")
 
     # invert tokens keys and values
     token_recognition_inverted = {v: k for k, v in tokens.items()}
@@ -116,31 +120,37 @@ def printTables():
     floatnumbers_inverted = {v: k for k, v in floatnumbers.items()}
     strings_inverted = {v: k for k, v in strings.items()}
 
-    print("TOKEN RECOGNITION: ")
+    arr_output = []
+    # print("TOKEN RECOGNITION: ")
     for i in scanner_output:
         if isinstance(i, tuple):
             if i[0] == 31:
+                arr_output.append(identifiers_inverted[i[1]])
                 print(identifiers_inverted[i[1]], end=' ')
             elif i[0] == 32:
+                arr_output.append(numbers_inverted[i[1]])
                 print(numbers_inverted[i[1]], end=' ')
             elif i[0] == 33:
-                print(floatnumbers_inverted[i[1]], end=' ') 
+                arr_output.append(floatnumbers_inverted[i[1]])
+                print(floatnumbers_inverted[i[1]], end=' ')
             elif i[0] == 34:
+                arr_output.append(strings_inverted[i[1]])
                 print(strings_inverted[i[1]], end=' ')
         else:
+            arr_output.append(token_recognition_inverted[i])
             print(token_recognition_inverted[i], end=' ')
-    print("\n\n")
+    return arr_output
 
 
-    print("Identifiers: ", identifiers_inverted)
-    print("Numbers: ", numbers_inverted)
-    print("Float Numbers: ", floatnumbers_inverted)
-    print("Strings: ", strings_inverted)
+    # print("Identifiers: ", identifiers_inverted)
+    # print("Numbers: ", numbers_inverted)
+    # print("Float Numbers: ", floatnumbers_inverted)
+    # print("Strings: ", strings_inverted)
 
 # scanner function
 def scanner():
     # open the file and read it
-    code = open_file('input1.txt')
+    code = open_file('input2.txt')
     # initialize the state to 0
     state = 0
     # initialize the lexeme to the empty string
@@ -243,13 +253,27 @@ def scanner():
     return 'EOF'
     
 
-scanner_output = []
-cont_current_token = 0
-current_token = ''
+# assign the tokens to a new array
+# tokens_output = tokens
+# cont_current_token = 0
+# current_token = tokens[cont_current_token]
+
+tokens_syntax = ['void', 'sort', '(', 'float', 'a', '[', ']', ',', 'int', 'low', ',', 'int', 'high', ')',
+    '{', 'int', 'i', ';', 'int', 'k', ';', 'i', '=', 'low', ';', 'while', '(', 'i', '<', 'high', '-', '1', ')',
+    '{', 'float', 't', ';', 'k', '=', 'miniloc', '(', 'a', ',', 'i', ',', 'high', ')', ';',
+    't', '=', 'a', '[', 'k', ']', ';', 'a', '[', 'k', ']', '=', 'a', '[', 'i', ']', ';',
+    'a', '[', 'i', ']', '=', 't', ';', 'i', '=', 'i', '+', '1', ';', '}', 'return', ';', '}',
+    'void', 'readarray', '(', 'void', ')',
+    '{', 'int', 'i', ';', 's', '=', '"enter', 'a', 'float', 'number:', '"', ';',
+    'write', '(', 's', ')', ';', 'read', '(', 'fl', ')', ';', 'while', '(', 'i', '<', '10', ')',
+    '{', 's', '=', '"enter', 'an', 'integer', 'number:', '"', ';', 'write', '(', 's', ')', ';',
+    'read', 'x', '[', 'i', ']', ';', 'f2', '[', 'i', ']', '=', '[', 'i', ']', '*', 'fl', ';',
+    'i', '=', 'i', '+', '1', ';', '}', 'return', ';', '}']
 
 def syntax():
-    scanner_output.append('$')
-    current_token = scanner_output[cont_current_token]
+    global current_token
+    tokens_syntax.append('$')
+    current_token = tokens_syntax[cont_current_token]
     program()
     if(current_token == '$'):
         print("Syntax_Analysis_OK")
@@ -562,12 +586,14 @@ def var_declaration_prime():
         match(';')
 
 def match(terminal):
+    global cont_current_token
+    global current_token
     if current_token == '$' :
         print("Syntax_Analysis_OK")
         exit(0)
     elif current_token == terminal:
         cont_current_token = cont_current_token+1
-        current_token = scanner_output[cont_current_token]
+        current_token = tokens_syntax[cont_current_token]
     else:
         error()
 
@@ -578,5 +604,10 @@ def error():
 # call the scanner function               
 scanner = scanner()
 if scanner == 'EOF':
-    printTables()
+    token_recog_output = printTables()
+    print()
+
+# call the parser function
+
+syntax()
  
